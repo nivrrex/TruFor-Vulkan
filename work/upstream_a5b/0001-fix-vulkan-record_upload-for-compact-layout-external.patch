@@ -1,0 +1,47 @@
+From eab83528060f31b413f3a21c5eefb56db56df590 Mon Sep 17 00:00:00 2001
+From: nivrrex <nivrrex@gmail.com>
+Date: Fri, 2 Oct 2026 17:49:33 +0800
+Subject: [PATCH] fix vulkan record_upload for compact-layout external Mat
+
+record_upload memcpy'd src.total()*elemsize contiguous bytes into a
+staging VkMat created with aligned plane stride (cstep). language
+bindings (pyncnn ncnn.Mat(numpy)) deliberately set cstep to the
+compact numpy plane stride, so whenever w*h*elemsize was not 16-byte
+aligned and channels>=2, plane q landed at q*w*h while consumers read
+at q*align(w*h,4): plane-shift corruption plus an unwritten tail on
+the last plane. copy plane by plane when strides differ.
+---
+ src/command.cpp | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/src/command.cpp b/src/command.cpp
+index 0437824..c4f39fb 100644
+--- a/src/command.cpp
++++ b/src/command.cpp
+@@ -411,7 +411,22 @@ void VkCompute::record_upload(const Mat& src, VkMat& dst, const Option& opt)
+     {
+         const Mat src_b = src_fp16.batch(b);
+         VkMat staging_b = dst_staging.batch(b);
+-        memcpy(staging_b.mapped_ptr(), src_b.data, src_b.total() * src_b.elemsize);
++        if (src_b.cstep == (size_t)staging_b.cstep && src_b.c == staging_b.c)
++        {
++            memcpy(staging_b.mapped_ptr(), src_b.data, src_b.total() * src_b.elemsize);
++        }
++        else
++        {
++            // src mat may wrap external data in compact layout (plane stride < aligned cstep)
++            // copy plane by plane to match staging layout
++            const size_t planesize = src_b.total() / src_b.c * src_b.elemsize;
++            char* dst_data = (char*)staging_b.mapped_ptr();
++            const char* src_data = (const char*)src_b.data;
++            for (int q = 0; q < src_b.c; q++)
++            {
++                memcpy(dst_data + (size_t)q * staging_b.cstep * src_b.elemsize, src_data + (size_t)q * src_b.cstep * src_b.elemsize, planesize);
++            }
++        }
+     }
+     dst_staging.allocator->flush(dst_staging.data);
+ 
+-- 
+2.39.5
+

@@ -1,0 +1,4 @@
+7767517
+2 2
+Input                    in0                      0 1 in0
+ReLU                     relu_ncnn_0              1 1 in0 1

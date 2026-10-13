@@ -1,0 +1,10 @@
+=== A5-lite 汇总（n=16，Δ = ncnn - ORT） ===
+ΔAUC: mean 0.00001  min -0.00072  max 0.00131
+Δrecall@FPR1%: mean -0.0000  min -0.0000  max 0.0000
+Δrecall@0.5: mean -0.0001  min -0.0008  max 0.0000
+prob翻转占比@0.5: mean 0.00001  max 0.00006
+prob翻转占比@thr99: mean 0.00002  max 0.00006
+conf翻转占比@0.5: mean 0.00002  max 0.00007
+Δdet score: mean -0.00096  max|.| 0.00253
+conf max_abs: min 1.369e-02  max 2.550e-02
+耗时(ms): ORT mean 2908 | ncnn mean 1078

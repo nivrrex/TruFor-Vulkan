@@ -1,0 +1,123 @@
+diff --git a/python/tvm/s_tir/dlight/gpu/transpose.py b/python/tvm/s_tir/dlight/gpu/transpose.py
+index d57ec7d..7f32435 100644
+--- a/python/tvm/s_tir/dlight/gpu/transpose.py
++++ b/python/tvm/s_tir/dlight/gpu/transpose.py
+@@ -31,15 +31,24 @@ class Transpose(GPUScheduleRule):
+     """Schedule rule for transpose"""
+ 
+     def is_transpose(self, sch: Schedule, block_rv: SBlockRV):
+-        block = sch.get(block_rv)
+-        if isinstance(block.body, tirx.BufferStore):
++        # The original comparison assumed both index lists are plain Python
++        # ints. On a real graph they can be tirx expressions, and then
++        # `list(a) != list(b) and set(a) == set(b)` yields an Expr instead of a
++        # bool, which raises "Cannot use and / or / not operator to Expr".
++        # Reduce to python ints first, and treat anything unexpected as
++        # "not a transpose" rather than aborting the whole schedule pass.
++        try:
++            block = sch.get(block_rv)
++            if not isinstance(block.body, tirx.BufferStore):
++                return False
+             rhs = block.body.value
+-            if isinstance(rhs, TensorLoad):
+-                lhs_indices = block.body.indices
+-                rhs_indices = rhs.indices
+-                if list(lhs_indices) != list(rhs_indices) and set(lhs_indices) == set(rhs_indices):
+-                    return True
+-        return False
++            if not isinstance(rhs, TensorLoad):
++                return False
++            lhs_indices = [int(i) for i in block.body.indices]
++            rhs_indices = [int(i) for i in rhs.indices]
++        except Exception:  # noqa: BLE001  any unmodellable block is simply not a transpose
++            return False
++        return lhs_indices != rhs_indices and set(lhs_indices) == set(rhs_indices)
+ 
+     def apply(  # pylint: disable=too-many-locals
+         self,
+diff --git a/src/runtime/vm/vm.cc b/src/runtime/vm/vm.cc
+index b541962..700e9f7 100644
+--- a/src/runtime/vm/vm.cc
++++ b/src/runtime/vm/vm.cc
+@@ -31,10 +31,23 @@
+ 
+ #include <thread>
+ 
++// ---- TVM_VM_PROFILE: per-instruction host timing with a device sync on each side.
++// Enabled only when the env var is set; prints one TSV line per executed
++// instruction:  TVMPROF <func_name> <milliseconds>
++// The sync is what makes the number GPU-inclusive: Vulkan submission is
++// asynchronous, so without it this would only measure dispatch (~3 ms total for
++// a ~2.5 s graph).
++#include <chrono>
++#include <cstdio>
++#include <cstdlib>
++
+ #include "./module_utils.h"
+ 
+ namespace tvm {
+ namespace runtime {
++// Opt-in per-instruction host timing. Off unless TVM_VM_PROFILE is set, and
++// costs one stderr line plus two device syncs per instruction when on.
++static const bool profile_enabled = std::getenv("TVM_VM_PROFILE") != nullptr;
+ namespace vm {
+ 
+ //---------------------------------------------
+@@ -724,6 +737,21 @@ void VirtualMachineImpl::InitFuncPool() {
+   }
+ }
+ 
++// Resolve the device from the first tensor argument and block until its queue is
++// idle, so the surrounding host clock actually spans GPU execution.
++static void ProfileSyncDevice(const std::vector<ffi::AnyView>& call_args, int offset,
++                              int num_args) {
++  for (int i = 0; i < num_args; ++i) {
++    auto t = call_args[i + offset].as<Tensor>();
++    if (!t) continue;
++    DLDevice dev = t->device();
++    if (auto* api = DeviceAPI::Get(dev, /*allow_missing=*/true)) {
++      api->StreamSync(dev, nullptr);
++    }
++    return;
++  }
++}
++
+ void VirtualMachineImpl::RunInstrCall(VMFrame* curr_frame, Instruction instr) {
+   DLOG(INFO) << "\n  pc = " << pc_ << ", execute: " << GetFuncName(instr.func_idx);
+   int args_begin_offset = instrument_ != nullptr ? 4 : 0;
+@@ -767,7 +795,34 @@ void VirtualMachineImpl::RunInstrCall(VMFrame* curr_frame, Instruction instr) {
+   TVM_FFI_ICHECK_LT(static_cast<size_t>(instr.func_idx), this->func_pool_.size());
+ 
+   if (instrument_ == nullptr) {
+-    this->InvokeClosurePacked(func_pool_[instr.func_idx].cast<ffi::ObjectRef>(), args, &ret);
++    if (profile_enabled) {
++      ProfileSyncDevice(call_args, args_begin_offset, instr.num_args);
++      std::chrono::steady_clock::time_point prof_t0 = std::chrono::steady_clock::now();
++      this->InvokeClosurePacked(func_pool_[instr.func_idx].cast<ffi::ObjectRef>(), args, &ret);
++      ProfileSyncDevice(call_args, args_begin_offset, instr.num_args);
++      double ms =
++          std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - prof_t0)
++              .count();
++      // func_idx is emitted so identical names can be told apart, and the real
++      // shape of the first tensor argument is read from the DLTensor rather than
++      // inferred from the function name.
++      std::string shp = "-";
++      for (int i = 0; i < instr.num_args; ++i) {
++        auto t = call_args[i + args_begin_offset].as<Tensor>();
++        if (!t) continue;
++        shp = "(";
++        for (int k = 0; k < t->ndim(); ++k) {
++          shp += std::to_string(static_cast<int64_t>(t->shape()[k]));
++          if (k + 1 < t->ndim()) shp += ",";
++        }
++        shp += ")";
++        break;
++      }
++      std::fprintf(stderr, "TVMPROF\t%d\t%s\t%.4f\t%s\n", instr.func_idx,
++                   GetFuncName(instr.func_idx).c_str(), ms, shp.c_str());
++    } else {
++      this->InvokeClosurePacked(func_pool_[instr.func_idx].cast<ffi::ObjectRef>(), args, &ret);
++    }
+   } else {
+     // insert light-weight instrument callback
+     call_args[0] = func_pool_[instr.func_idx];

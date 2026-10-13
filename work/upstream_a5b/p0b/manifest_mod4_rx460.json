@@ -1,0 +1,74 @@
+[
+ {
+  "name": "b22_r0.001_rem1",
+  "base": "b22_r0.001",
+  "ratio": 0.001,
+  "size": "713x965",
+  "hw_mod4": 1,
+  "src": "b22_r0.001"
+ },
+ {
+  "name": "b22_r0.001_rem3",
+  "base": "b22_r0.001",
+  "ratio": 0.001,
+  "size": "713x967",
+  "hw_mod4": 3,
+  "src": "b22_r0.001"
+ },
+ {
+  "name": "b22_r0.01_rem1",
+  "base": "b22_r0.01",
+  "ratio": 0.01,
+  "size": "713x965",
+  "hw_mod4": 1,
+  "src": "b22_r0.01"
+ },
+ {
+  "name": "b22_r0.01_rem3",
+  "base": "b22_r0.01",
+  "ratio": 0.01,
+  "size": "713x967",
+  "hw_mod4": 3,
+  "src": "b22_r0.01"
+ },
+ {
+  "name": "b22_r0.1_rem1",
+  "base": "b22_r0.1",
+  "ratio": 0.1,
+  "size": "713x965",
+  "hw_mod4": 1,
+  "src": "b22_r0.1"
+ },
+ {
+  "name": "b22_r0.1_rem3",
+  "base": "b22_r0.1",
+  "ratio": 0.1,
+  "size": "713x967",
+  "hw_mod4": 3,
+  "src": "b22_r0.1"
+ },
+ {
+  "name": "b22_r0.001",
+  "base": "b22_r0.001",
+  "ratio": 0.001,
+  "size": "714x967",
+  "hw_mod4": 2,
+  "src": "b22_r0.001"
+ },
+ {
+  "name": "b22_r0.01",
+  "base": "b22_r0.01",
+  "ratio": 0.01,
+  "size": "714x967",
+  "hw_mod4": 2,
+  "src": "b22_r0.01"
+ },
+ {
+  "name": "b22_r0.1",
+  "base": "b22_r0.1",
+  "ratio": 0.1,
+  "size": "714x967",
+  "hw_mod4": 2,
+  "src": "b22_r0.1"
+ }
+]

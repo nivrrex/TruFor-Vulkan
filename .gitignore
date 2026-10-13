@@ -1,0 +1,27 @@
+vendor/
+venv/
+weights/
+truFor-src/
+artifacts/
+reports/mesa-ab/
+reports/bench-production/*.npz
+__pycache__/
+*.pyc
+*.so
+!scripts/opt/*.py
+# Regenerable model artifacts, not committed (each ~267 MB, over GitHub's 100 MB
+# per-file limit). Rebuild with scripts/export_onnx_dynamo.py (fixed 512) or
+# scripts/export_onnx_dynamo_dynamic.py (dynamic H/W for the ORT-CPU path).
+reports/onnx-dynamo/trufor_dynamic_dynamo.onnx
+reports/onnx-dynamo/*.onnx.data
+reports/onnx-dynamo/dynamic-export.log
+reports/onnx-dynamo/verify-dynamic.log
+# Stage-A generated assets, regenerable (pnnx_a1_convert.py / ablation scripts);
+# ncnn_a1 ~1.2G, incl. .bin over GitHub's 100 MB per-file limit.
+work/ncnn_a1/
+work/ablation_inputs/
+work/ablation_results/a5b_dumps/
+work/upstream_a5b/*.npz
+# 补丁轮 wheel 有意入库（BSD-3，约10MB，<GitHub 100MB限制）：clone 后可直接 pip install。
+# 见 work/upstream_a5b/wheels/README.md；其余中间物（*.npz）仍忽略。
+work/ablation_results/a5b_dumps_rx460/

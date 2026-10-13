@@ -1,0 +1,10 @@
+
+=== 汇总（均值 AUC / recall@FPR1% / n） ===
+-- 大图(下采样类) --
+  ratio=0.001: native: AUC 0.7414 rec 0.248 (n=4) | cap768: AUC 0.5623 rec 0.000 (n=4) | stretch512: AUC 0.5589 rec 0.000 (n=4) | letterbox512: AUC 0.5967 rec 0.000 (n=4)
+  ratio=0.01: native: AUC 0.7868 rec 0.247 (n=4) | cap768: AUC 0.5419 rec 0.000 (n=4) | stretch512: AUC 0.6724 rec 0.000 (n=4) | letterbox512: AUC 0.7351 rec 0.000 (n=4)
+  ratio=0.1: native: AUC 0.9023 rec 0.450 (n=4) | cap768: AUC 0.6010 rec 0.000 (n=4) | stretch512: AUC 0.6546 rec 0.000 (n=4) | letterbox512: AUC 0.6248 rec 0.000 (n=4)
+-- 小图/对照(上采样类) --
+  ratio=0.001: native: AUC 0.9841 rec 0.472 (n=1) | cap768: AUC 0.9841 rec 0.472 (n=1) | stretch512: AUC 0.9032 rec 0.000 (n=1) | letterbox512: AUC 0.9497 rec 0.000 (n=1)
+  ratio=0.01: native: AUC 0.9986 rec 0.973 (n=2) | cap768: AUC 0.9986 rec 0.973 (n=2) | stretch512: AUC 0.9951 rec 0.807 (n=2) | letterbox512: AUC 0.9872 rec 0.636 (n=2)
+  ratio=0.1: native: AUC 0.9285 rec 0.073 (n=1) | cap768: AUC 0.9285 rec 0.073 (n=1) | stretch512: AUC 0.6339 rec 0.003 (n=1) | letterbox512: AUC 0.5577 rec 0.000 (n=1)

@@ -1,0 +1,9 @@
+# 本仓库的来源
+
+- 内容来源：TruFor_Vulkan_dev（原工程仓），HEAD 906f59a44508fb3ef301cd221368a0df622b6ea1
+- 生成方式：git archive HEAD 导出 tracked 文件后，剔除 >100MB 的模型文件与无关项
+- 重新初始化：本仓库为单次提交的快照，不含原仓库 git 历史（原 .git 约 1.3GB，含 5 个 >100MB 对象）
+- 已移除：reports/ 下 5 个 >100MB 模型文件（mnn/*.onnx、mnn/*.mnn、onnx-dynamo/*.onnx、
+  phase8a/*.onnx、onnx-probe/*.onnx）——GitHub 单文件 100MB 限制，可由导出脚本再生
+- 本仓库不含产品侧（"下游应用"）代码；产品侧另存
+- 权重不入库：见 LICENSE-NOTICE.md

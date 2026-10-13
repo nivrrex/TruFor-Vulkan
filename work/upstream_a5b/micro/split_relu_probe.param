@@ -1,0 +1,5 @@
+7767517
+3 4
+Input                    in0                      0 1 in0
+Split                    splitncnn_0              1 2 in0 1 2
+ReLU                     relu_ncnn_1              1 1 1 3

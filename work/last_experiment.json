@@ -1,0 +1,45 @@
+{
+  "baseline": {
+    "median_ms": 2540.127325017238,
+    "min_ms": 2524.4948499894235,
+    "max_ms": 2586.2980140082072,
+    "map_corr": 0.9999999999340244,
+    "iou": 1.0,
+    "dice": 1.0,
+    "score_abs_err": 2.4377679453957413e-06,
+    "prim_funcs": 243,
+    "rewrites": []
+  },
+  "split": {
+    "median_ms": 2544.3735759763513,
+    "min_ms": 2517.788755008951,
+    "max_ms": 2576.1575540236663,
+    "map_corr": 0.9999999999340244,
+    "iou": 1.0,
+    "dice": 1.0,
+    "score_abs_err": 2.4377679453957413e-06,
+    "prim_funcs": 243,
+    "rewrites": []
+  },
+  "delta_ms": -4.24625095911324,
+  "tir_stats": {
+    "fused_conv2d1_add_relu": {
+      "grid_x": 8192,
+      "threads": [
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "arg_dims": []
+    },
+    "max4": {
+      "grid_x": 1,
+      "threads": [
+        256
+      ],
+      "arg_dims": []
+    }
+  }
+}

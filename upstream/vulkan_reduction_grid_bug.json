@@ -1,0 +1,22 @@
+{
+  "title": "Vulkan: reduction to a scalar output emits no grid (single-threaded, 20x below peak bandwidth)",
+  "component": "src/backend/vulkan reduction schedule (tvm/s_tir/dlight/gpu/{reduction,general_reduction}.py)",
+  "tvm_version": "0.27.0 (4d0ac168c7)",
+  "device": "AMD Radeon RX 460 / RADV POLARIS11, Mesa 25.0.7, Vulkan 1.4.305",
+  "summary": "A reduce whose output has a single element is scheduled with grid=1: 255 of 256 threads are masked off and one thread walks the reduce axis serially.",
+  "repro": "scripts/repro_single_output_reduce.py",
+  "measured": {
+    "(1,1,262144)->(1,1,1) GPU ms": 84.23,
+    "same op (1,128,128,128)->(1,128,1,1) GPU ms": 0.41,
+    "GB/s at 84 ms": 0.012,
+    "device peak GB/s": 112,
+    "independent ReduceMax (1,1,262144) ms": 84.2,
+    "variant (1,1,512)->scalar ms": 0.22
+  },
+  "rule_behaviour": {
+    "Reduction().apply ->": "None (no match)",
+    "GeneralReduction().apply ->": "Schedule, but no blockIdx emitted"
+  },
+  "expected": "the grid should be derived from the reduce axis extent, not the output extent; splitting the reduce axis with rfactor would restore parallelism and is bit-exact for max/min",
+  "impact_in_a_real_graph": "TruFor: 13.4% of whole-graph GPU time (334 ms of 2464 ms) in one kernel"
+}

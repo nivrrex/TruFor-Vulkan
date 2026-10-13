@@ -1,0 +1,42 @@
+906f59a 产出Linux两包(generic/nvidia)决策与校验记录;Windows三场景需Windows构建机暂缓
+1a08746 决策记录：评估ncnn-CPU后否决(慢1.5-2倍+2.43MP OOM;打包仅省29MB);维持ORT(CPU+CUDA)+ncnn-Vulkan叠加
+08f42c6 补丁轮冻结包e2e(CPU/GPU两态)PASS+wheel分发脚本落地(强制md5,拒收stock轮)
+fbef08c P2-a+CUDA真机: P4 2.43MP/RX460 0.998MP 跨进程逐位一致无OOM; CUDA_CHECK=PASS; det门2e-2→5e-3; 文档更正'ncnn保留auto'(用户已确认)
+47bdfb4 P1-d文档(B仓)：STATE:241-247就地作废;摘要C5措辞更正+2605出处更正+登记A硬编码路径;FORK_BUILD补子模块版本;删除ISSUE_draft本地注记
+3414f86 gitignore: RX460 npz 中间件目录；补 RX460 metrics 汇总
+f9e0abc P0-b RX460补测: ①9样本|ΔAUC|max=4.4e-4 PASS;②4尺寸0超包络0平移(对照4.801e-3);C8跨进程逐位一致
+55ebd04 P0-b汇总报告：四项结果+准入红线现状+已知限制
+80b8dd9 STATE/LOG：P0-b四项结论(①PASS ②通过事后修订 ④Split/Crop PASS+Slice/Concat被第二缺陷阻断 ③H2通过);auto未改
+0728b76 P0-b③H2：验证层已加载且buffer上传/下载静默(无VUID)+源码判读download无对称缺陷；record_clone/VkTransfer两处判读不入缺陷
+7fd1a44 P0-b④：Split/Crop全网格补丁轮0/232失配(stock 152/232=灵敏度);Slice/Concat/ReLU迷你网被第二缺陷阻断(15/15 SIGSEGV,stock同样)
+f2d04c3 P0-b②：stock正对照S PASS(超包络2286/2605,shift_flag=10,含blob1/2)+P2'/P3' PASS→②通过(阈值事后修订)
+677acd1 P0-b②判据事后修订(登记): P1改对照包络口径+S灵敏度正对照+P2'/P3'; 明确证明力低于事先固定
+300b6af LOG：P0-b②判据更替决策（TSV判据不可达→rel_L2仪器）、否决替代、②未判定现状；①PASS
+f7e50d8 P0-b②原始分块TSV（4尺寸×18块）入库
+0b93b02 P0-b②逐元素rel_L2仪器结果：P1自检未过(对照946/2605超1e-3,max 4.80e-3)→②未判定;P2/P3/P5原始数据全落盘
+f022fa6 P0-b①任务级补证PASS：12样本覆盖(H·W)%4=1/2/3各4，|ΔAUC|max=5.1e-4、prob翻转max=5.8e-5（P4补丁轮）
+d092af4 P0-b①夹具与脚本：mod4三类余数裁剪样本生成器（无重采样）+pnnx_a5b_native加--manifest；manifest 12项(1/2/3各4)
+c97ec67 P0-b②判据（运行前固定）：逐元素rel_L2仪器+对照包络+平移形态检测；登记否决的净增口径/直接判FAIL
+fec97b1 P0-b②原始证据：补丁轮全网逐blob回归714x967(rem2)+对齐尺寸714x968对照；tsv/log/分析全部落盘
+aec725b P0-a证据归档：43单测OK+R0 GOLDEN=PASS+.so md5（原始日志）
+d4533a6 迁移摘要
+25da713 STATE/LOG补记: ncnn_pypi_env自包含化（+trufor1轮+ort1.29+pillow）43用例含golden全绿；A收尾commit 9b66278
+1f1fda5 STATE/LOG: A仓S6落地闭环——auto链cuda→ncnn→cpu+probe_ncnn_upload行为判据门控（stock/+trufor1双环境实测），ncnn_pypi_env换装+trufor1轮，stock轮存档wheels/作known-bad参照
+2c36a22 fork 修复定案：record_upload 步长截断=上传损坏根因；补丁+wheel(+trufor1)+A5b 双设备 16/16 PASS
+b10507e STATE: 补记 use_packing_layout=False 不免疫 Split pack 缺陷（P4 实测 9/12 同模式），ncnn 规避路径收窄至改param/padding
+d354a6e STATE/LOG: A5b 根因改判——Vulkan pack 转换尺寸缺陷（c≥2 且 (H·W)%4≠0），推翻 Swin 算子归因
+76da335 STATE/LOG: S8落地登记（两态冻结e2e逐位PASS；阶段B S0–S8完成，挂起项照旧）
+5060103 STATE/LOG: S7落地登记（CLI白名单+默认auto+可空config键+C2缩图告警真实构造通过；A仓42ad33b）
+4cb2dd9 A5b FAIL：ncnn-Vulkan 尺寸相关确定性偏离（torch/ORT/ncnn-CPU 三方互证，Swin encoder latent 23×31 起偏），ncnn 定态 explicit；工件入库
+4fc351a STATE: 阶段B A侧进度登记 S3/S4/S5（auto=cuda→cpu，ncnn停留explicit待A5b，backend字段入report）
+6069669 STATE/LOG: 撤回"CUDA EP三输出逐位一致"之det部分——11样本复测det恰双离散模式(Δlogit~1.1e-7)，out/conf仍逐位一致
+2560a9d repo: 提交阶段A/B工件——探测与闸门脚本、A1–A5与CUDA跨进程日志、A2参考npz、动态ONNX导出脚本；忽略可再生大资产(work/ncnn_a1 1.2G、ablation_inputs)
+7160727 STATE: 阶段B目标机更正为 Linux 为主(NVIDIA+AMD)；登记 A 侧 S1/S2 进度与 LD_LIBRARY_PATH 运行时改无效事实
+25c2e84 STATE/TODO/POC: 部分撤回"T0 常量 0.5 消融 7 次 native 崩溃 → BLOCKED"
+e237b46 STATE: 撤回"TVM 流水线无法表达 align_corners=false resize"（LOG.md:1651）
+83b60c6 scalar_reduce: clamp sh[t+st] 到 NT-1，撤回 P4-驱动差异的错误归因
+cc97d38 STATE/TODO: T9 P4-vs-RX460 A/B 决定不切生产默认
+b26f270 STATE: 记录 _dev/RX460 同 session 合法基线，stock 2463.4 / delivered 853.3 → GPU 2.887×；ORT CPU 本机 Ryzen 5 2600 median ~2950 与旧 2129 不可比
+f9ecc7d STATE/TODO：登记 T8 GEMM 交付 853ms；撤回 decoder 'BLOCKED/无法带类型 GlobalVar' 旧结论（add_func 已解）
+fa344bc GEMM 修复+接入：k0*BK 分块索引 bug 修好；relu/residual 双 epilogue；swap_conv 按 4/5-buffer 签名替换，30→60 处，整图 906→853 ms，验收 worst rel_L2 1.29e-06 不变
+f5a331d _dev 自包含基线：拷贝 vendor(tvm-src/mesa-ab)、venv、env.sh；复现 32 处替换、907 ms median

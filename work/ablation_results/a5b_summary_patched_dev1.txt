@@ -1,0 +1,11 @@
+=== A5b 汇总（原尺寸，n=16，Δ = ncnn(补丁轮, Tesla P4) - ORT-CPU）===
+ΔAUC: mean -0.00005  min -0.00056  max +0.00042
+|ΔAUC| max: 0.00056（门 2e-3）
+Δrecall@FPR1%: mean -0.0004  min -0.0069  max 0.0005（记录项）
+Δrecall@0.5: mean -0.0001  min -0.0018  max 0.0004（记录项）
+prob翻转占比@0.5: mean 0.00004  max 0.00030（门 0.001）
+prob翻转占比@thr99: mean 0.00003  max 0.00010（门 0.001）
+conf翻转占比@0.5: mean 0.00005  max 0.00028
+Δdet score: mean -0.00133  max|.| 0.00631（记录项）
+conf max_abs: min 1.369e-02  max 4.257e-02（记录项）
+耗时(ms): ORT mean 16536 | ncnn mean 16240

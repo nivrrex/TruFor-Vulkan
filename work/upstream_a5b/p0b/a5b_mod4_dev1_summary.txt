@@ -1,0 +1,11 @@
+=== A5b 汇总（原尺寸，n=12，Δ = ncnn - ORT） ===
+ΔAUC: mean 0.00017  min -0.00007  max 0.00051
+|ΔAUC| max: 0.00051（门 2e-3）
+Δrecall@FPR1%: mean 0.0000  min 0.0000  max 0.0000
+Δrecall@0.5: mean 0.0000  min 0.0000  max 0.0000
+prob翻转占比@0.5: mean 0.00003  max 0.00006（门 0.001）
+prob翻转占比@thr99: mean 0.00002  max 0.00004（门 0.001）
+conf翻转占比@0.5: mean 0.00003  max 0.00006
+Δdet score: mean -0.00163  max|.| 0.00605
+conf max_abs: min 1.969e-02  max 2.892e-02（记录项）
+耗时(ms): ORT mean 11112 | ncnn mean 9681

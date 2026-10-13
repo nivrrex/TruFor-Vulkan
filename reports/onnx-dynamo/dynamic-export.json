@@ -1,0 +1,101 @@
+{
+  "seconds": 55.010281846,
+  "nodes": 1979,
+  "distinct_ops": 32,
+  "bytes": 279306538,
+  "rgb_dims": [
+    "1",
+    "3",
+    "height",
+    "width"
+  ],
+  "dynamic_axes": {
+    "rgb": {
+      "2": "height",
+      "3": "width"
+    },
+    "out": {
+      "2": "height",
+      "3": "width"
+    },
+    "conf": {
+      "2": "height",
+      "3": "width"
+    }
+  },
+  "op_census_top": {
+    "Transpose": 324,
+    "Add": 320,
+    "Reshape": 306,
+    "MatMul": 272,
+    "Mul": 141,
+    "LayerNormalization": 114,
+    "Conv": 111,
+    "Gather": 80,
+    "Concat": 53,
+    "Div": 41,
+    "Softmax": 40,
+    "Relu": 39,
+    "Erf": 32,
+    "Squeeze": 18,
+    "Slice": 18,
+    "Gemm": 10,
+    "Sigmoid": 9,
+    "Split": 8,
+    "Resize": 8,
+    "Sub": 4,
+    "ReduceMean": 4,
+    "ReduceMax": 4,
+    "BatchNormalization": 4,
+    "ReduceLogSumExp": 4,
+    "ReduceSum": 4,
+    "Shape": 2,
+    "LogSoftmax": 2,
+    "Neg": 2,
+    "Exp": 2,
+    "Tile": 1
+  },
+  "pooling_substitutions": [
+    [
+      "backbone.FRMs.0.channel_weights.avg_pool",
+      "AdaptiveAvgPool2d",
+      "mean(dim=(2,3))"
+    ],
+    [
+      "backbone.FRMs.0.channel_weights.max_pool",
+      "AdaptiveMaxPool2d",
+      "amax(dim=(2,3))"
+    ],
+    [
+      "backbone.FRMs.1.channel_weights.avg_pool",
+      "AdaptiveAvgPool2d",
+      "mean(dim=(2,3))"
+    ],
+    [
+      "backbone.FRMs.1.channel_weights.max_pool",
+      "AdaptiveMaxPool2d",
+      "amax(dim=(2,3))"
+    ],
+    [
+      "backbone.FRMs.2.channel_weights.avg_pool",
+      "AdaptiveAvgPool2d",
+      "mean(dim=(2,3))"
+    ],
+    [
+      "backbone.FRMs.2.channel_weights.max_pool",
+      "AdaptiveMaxPool2d",
+      "amax(dim=(2,3))"
+    ],
+    [
+      "backbone.FRMs.3.channel_weights.avg_pool",
+      "AdaptiveAvgPool2d",
+      "mean(dim=(2,3))"
+    ],
+    [
+      "backbone.FRMs.3.channel_weights.max_pool",
+      "AdaptiveMaxPool2d",
+      "amax(dim=(2,3))"
+    ]
+  ],
+  "opset": 18
+}
